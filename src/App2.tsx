@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { useState } from 'react';
-import { component, derived, ServiceProvider, state, trigger, useService, useViewModel } from './impair';
+import { component, derived, ServiceProvider, shallowState, state, trigger, useService, useViewModel } from './impair';
 
 @injectable()
 class Data {
@@ -20,7 +20,8 @@ class SuperData extends Data {
 
 @injectable()
 class State {
-	@state public value = 3;
+	@shallowState
+	public value = 3;
 
 	constructor(@inject(SuperData) public data: SuperData) {
 		console.log('dataaa', data.data);

@@ -6,3 +6,4 @@ export { useService } from './component/hooks/useService';
 export { useViewModel } from './component/hooks/useViewModel';
 export * from './injectables/tokens';
 export * from './types';
+export { pauseTracking, enableTracking } from '@vue/reactivity';

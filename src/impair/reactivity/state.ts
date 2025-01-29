@@ -1,14 +1,25 @@
 import { Ref, ref, shallowRef } from '@vue/reactivity';
-import { Dictionary } from '../types';
+import { Dictionary, StateMetadata } from '../types';
 import { stateMetadataKey } from '../utils/symbols';
 
+function registerStateMetadata(target: any, metadata: StateMetadata) {
+	const statePropMetadata: StateMetadata[] = Reflect.getMetadata(stateMetadataKey, target) ?? [];
+	statePropMetadata.push(metadata);
+	return Reflect.metadata(stateMetadataKey, statePropMetadata)(target);
+}
+
 export function state(target: any, propertyKey: string) {
-	const propNames = Reflect.getMetadata(stateMetadataKey, target) ?? [];
-	propNames.push({
+	return registerStateMetadata(target, {
 		propertyKey,
-		isShallow: false,
+		type: 'deep',
 	});
-	return Reflect.metadata(stateMetadataKey, propNames)(target);
+}
+
+export function shallowState(target: any, propertyKey: string) {
+	return registerStateMetadata(target, {
+		propertyKey,
+		type: 'ref',
+	});
 }
 
 type InitParams = {
@@ -18,13 +29,15 @@ type InitParams = {
 export function initState({ instance }: InitParams) {
 	const stateValueMap = new Map<string, Ref<any>>();
 
-	const stateProperties = Reflect.getMetadata(stateMetadataKey, instance);
+	const stateProperties: StateMetadata[] = Reflect.getMetadata(stateMetadataKey, instance);
 
 	if (stateProperties) {
-		stateProperties.forEach(({ propertyKey, isShallow }: any) => {
+		stateProperties.forEach(({ propertyKey, type }) => {
 			const initialValue = instance[propertyKey];
 
-			stateValueMap.set(propertyKey, isShallow ? shallowRef(initialValue) : ref(initialValue));
+			const reactiveState = type === 'deep' ? ref(initialValue) : shallowRef(initialValue);
+
+			stateValueMap.set(propertyKey, reactiveState);
 
 			Object.defineProperty(instance, propertyKey, {
 				get() {

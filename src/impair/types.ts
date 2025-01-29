@@ -53,3 +53,10 @@ export type ServiceInstance = OnMount &
 export type Dictionary<T = any> = {
 	[key: string]: T;
 };
+
+export type StateMetadata = {
+	propertyKey: string;
+	type: StateType;
+};
+
+export type StateType = 'shallow' | 'deep' | 'ref';
