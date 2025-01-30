@@ -9,6 +9,7 @@ class Data {
 	data = 0;
 }
 
+//adsasdsa
 @injectable()
 class SuperData extends Data {
 	@state
