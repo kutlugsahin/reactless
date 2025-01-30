@@ -21,7 +21,6 @@ export function initInstance<T extends Dictionary>(instance: T) {
 	initState(params);
 	initDerived(params);
 	initTrigger(params);
-
 	bindMethods(instance);
 
 	instance.init?.();
