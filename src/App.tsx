@@ -1,23 +1,10 @@
 import { container, inject, injectable, Lifecycle } from 'tsyringe';
 import './App.css';
 
-
-import {
-	BehaviorSubject,
-	combineLatest,
-	Observable,
-	Subject
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { DenemeService } from './services/deneme';
 import { MainService } from './services/main';
 import { ServiceProvider, useService } from './viewmodel';
-
-const useConnectedProps = () =>
-	useService(MainService, (mainService) => ({
-		increment: mainService.increment,
-		value: mainService.counter.value,
-		mainValue: mainService.mainValue,
-	}));
 
 function App() {
 	// const {

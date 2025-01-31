@@ -10,7 +10,7 @@ export function Counter(props: CounterProps) {
 		count,
 		mainCount,
 		inc,
-		setters: { setCount, setMainCount },
+		setters: { setCount },
 	} = useViewModel(CounterViewModel, props);
 
 	return (

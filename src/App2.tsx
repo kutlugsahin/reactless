@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { useState } from 'react';
-import { component, derived, ServiceProvider, state, trigger, useService, useViewModel } from './impair';
+import { derived, ServiceProvider, state, trigger, useService, useViewModel } from '@impair';
 
 @injectable()
 class Data {
@@ -61,7 +61,7 @@ export function App2() {
 	);
 }
 
-const Comp = component<{ x: number }>(({ x }) => {
+export function Comp({ x }: any) {
 	const { value, inc } = useService(State);
 
 	return (
@@ -69,7 +69,7 @@ const Comp = component<{ x: number }>(({ x }) => {
 			{value} : {x}
 		</button>
 	);
-});
+}
 
 @injectable()
 class ViewModel {
@@ -96,7 +96,7 @@ class ViewModel {
 	}
 }
 
-const Com2 = component(() => {
+let Com2 = () => {
 	const { inc, name, updateName, dataService } = useViewModel(ViewModel);
 
 	return (
@@ -106,4 +106,4 @@ const Com2 = component(() => {
 			<input type="text" value={name} onChange={(e) => updateName(e.target.value)} />
 		</div>
 	);
-});
+};

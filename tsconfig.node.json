@@ -20,9 +20,18 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@impair": [
+        "./src/impair"
+      ],
+      "@impair/*": [
+        "./src/impair/*"
+      ]
+    }
   },
   "include": [
-    "vite.config.ts"
+    "vite.config.ts",
+    "types.d.ts"
   ]
 }

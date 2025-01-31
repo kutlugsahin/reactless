@@ -24,9 +24,18 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "@impair": [
+        "./src/impair"
+      ],
+      "@impair/*": [
+        "./src/impair/*"
+      ]
+    }
   },
   "include": [
-    "src"
+    "src",
+    "types.d.ts"
   ]
 }
