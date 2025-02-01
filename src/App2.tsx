@@ -1,7 +1,8 @@
 import { inject, injectable } from 'tsyringe';
 
-import { useState } from 'react';
-import { derived, ServiceProvider, state, trigger, useService, useViewModel } from '@impair';
+import React, { useState } from 'react';
+import { component, derived, ServiceProvider, state, trigger, useService, useViewModel } from '@impair';
+import { MyComp } from './reactiveComp';
 
 @injectable()
 class Data {
@@ -19,7 +20,7 @@ class SuperData extends Data {
 }
 
 @injectable()
-class State {
+export class State {
 	@state
 	public value = 3;
 
@@ -57,11 +58,20 @@ export function App2() {
 			<Comp x={x} />
 			<Com2 />
 			<button onClick={() => setX(x + 1)}>XX</button>
+			<div>
+				<MyComp />
+			</div>
 		</ServiceProvider>
 	);
 }
 
-export function Comp({ x }: any) {
+const AA = component(() => {
+	const { value, inc } = useService(State);
+
+	return <button onClick={inc}>{value}</button>;
+});
+
+function Comp({ x }: any) {
 	const { value, inc } = useService(State);
 
 	return (
@@ -96,7 +106,7 @@ class ViewModel {
 	}
 }
 
-let Com2 = () => {
+function Com2() {
 	const { inc, name, updateName, dataService } = useViewModel(ViewModel);
 
 	return (
@@ -106,4 +116,4 @@ let Com2 = () => {
 			<input type="text" value={name} onChange={(e) => updateName(e.target.value)} />
 		</div>
 	);
-};
+}
