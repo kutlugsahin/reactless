@@ -11,12 +11,14 @@
     "debug": "vite --debug -l info"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.0.3",
     "@vue/reactivity": "^3.5.13",
     "immer": "^10.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "tailwindcss": "^4.0.3",
     "tsyringe": "^4.8.0"
   },
   "devDependencies": {

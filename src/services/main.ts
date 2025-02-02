@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { delay, inject, injectable } from 'tsyringe';
-import type { Props } from '../viewmodel';
-import { MutableSubject, OnMount, ProviderProps, state } from '../viewmodel';
+import type { Props } from '../lib/viewmodel';
+import { MutableSubject, OnMount, ProviderProps, state } from '../lib/viewmodel';
 
 export interface IMainService {
 	increment(): void;

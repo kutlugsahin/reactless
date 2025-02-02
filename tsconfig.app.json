@@ -27,10 +27,10 @@
     "emitDecoratorMetadata": true,
     "paths": {
       "@impair": [
-        "./src/impair"
+        "./src/lib/impair"
       ],
       "@impair/*": [
-        "./src/impair/*"
+        "./src/lib/impair/*"
       ]
     }
   },

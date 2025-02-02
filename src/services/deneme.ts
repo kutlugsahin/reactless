@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import { injectable } from 'tsyringe';
-import { state } from '../viewmodel';
+import { state } from '../lib/viewmodel';
 
 @injectable()
 export class DenemeService {

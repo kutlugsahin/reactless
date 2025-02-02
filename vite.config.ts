@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 import tsConfigPaths from 'vite-tsconfig-paths';
 import componentTransform from './plugin-reactive-components';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
 	plugins: [
@@ -10,7 +11,8 @@ export default defineConfig({
 			devTarget: 'es2020',
 		}),
 		tsConfigPaths(),
-		componentTransform(),
+		// componentTransform(),
+		tailwindcss(),
 	],
 	optimizeDeps: {
 		esbuildOptions: {
