@@ -1,7 +1,7 @@
+import { useViewModel } from '@impair';
 import { useEffect, useState } from 'react';
-import { inject } from 'tsyringe';
 
-export function TodoList() {
+export function TodoList2() {
 	const [id, setId] = useState(1);
 	const [todos, setTodos] = useState<any[]>([]);
 	const [todo, setTodo] = useState<any>();
@@ -38,8 +38,36 @@ export function TodoList() {
 	);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =============================== View Layer ==============================================
-function BetterTodoList({ todos, todo, onTodoClicked }: any) {
+export const TodoList = ({ todos, todo, onTodoClicked }: any) => {
 	return (
 		<div>
 			<div>
@@ -54,14 +82,16 @@ function BetterTodoList({ todos, todo, onTodoClicked }: any) {
 			</p>
 		</div>
 	);
-}
+};
 
 // =============================== Business Layer ==============================================
-class TodoListViewModel {
+
+class TodoListService {
 	public todos: any[] = [];
+
 	public todo: any = {};
 
-	constructor(@inject(UserService) private userService: UserService) {
+	constructor() {
 		this.fetchTodos();
 	}
 
@@ -75,24 +105,7 @@ class TodoListViewModel {
 		this.todo = await response.json();
 	}
 
-	public get user() {
-		return this.userService.user;
-	}
-
 	onTodoClicked(id: number) {
 		this.fetchTodoById(id);
-	}
-}
-
-class UserService {
-	public user: any = {};
-
-	constructor() {
-		this.fetchUser();
-	}
-
-	private async fetchUser() {
-		const response = await fetch('https://jsonplaceholder.typicode.com/users/1');
-		this.user = await response.json();
 	}
 }
