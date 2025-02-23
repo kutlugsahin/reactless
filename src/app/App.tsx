@@ -27,7 +27,7 @@ export function App() {
 								<Route
 									path="/posts"
 									element={
-										<ServiceProvider provide={[PostService]} key={0}>
+										<ServiceProvider provide={[PostService, AlbumService]} key={0}>
 											<UserPosts />
 										</ServiceProvider>
 									}

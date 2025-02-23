@@ -1,8 +1,7 @@
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 import tsConfigPaths from 'vite-tsconfig-paths';
-import componentTransform from './plugin-reactive-components';
-import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
 	plugins: [
@@ -14,6 +13,9 @@ export default defineConfig({
 		// componentTransform(),
 		tailwindcss(),
 	],
+	esbuild: {
+		target: 'es2020',
+	},
 	optimizeDeps: {
 		esbuildOptions: {
 			tsconfigRaw: {

@@ -1,8 +1,7 @@
-import 'reflect-metadata';
 import { createRoot } from 'react-dom/client';
-import { App } from './app/App.tsx';
+import 'reflect-metadata';
 
+import { Comp } from './components/reactivity.tsx';
 import './index.css';
-import { Reactivity } from './components/reactivity.tsx';
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(<Comp />);

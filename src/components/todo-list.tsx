@@ -1,4 +1,4 @@
-import { useViewModel } from '@impair';
+import { useService } from '@impair';
 import { useEffect, useState } from 'react';
 
 export function TodoList2() {
@@ -38,36 +38,10 @@ export function TodoList2() {
 	);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // =============================== View Layer ==============================================
-export const TodoList = ({ todos, todo, onTodoClicked }: any) => {
+export const TodoList = () => {
+	const { todo, onTodoClicked, todos } = useService(TodoListService);
+
 	return (
 		<div>
 			<div>
@@ -87,9 +61,12 @@ export const TodoList = ({ todos, todo, onTodoClicked }: any) => {
 // =============================== Business Layer ==============================================
 
 class TodoListService {
-	public todos: any[] = [];
+	public todos = []
 
-	public todo: any = {};
+	public todo: any = {
+		id: 0,
+		title: 'asdsdf'
+	};
 
 	constructor() {
 		this.fetchTodos();
@@ -103,6 +80,8 @@ class TodoListService {
 	private async fetchTodoById(id: number) {
 		const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`);
 		this.todo = await response.json();
+
+		this.todo.t
 	}
 
 	onTodoClicked(id: number) {

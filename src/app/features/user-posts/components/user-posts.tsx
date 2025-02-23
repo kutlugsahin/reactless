@@ -1,7 +1,7 @@
-import { component, useService } from '@impair';
+import { useService } from '@impair';
 import { PostService } from '../services/post-service';
 
-export const UserPosts = component(() => {
+export function UserPosts() {
 	const { posts } = useService(PostService);
 
 	return (
@@ -13,4 +13,4 @@ export const UserPosts = component(() => {
 			))}
 		</div>
 	);
-});
+}

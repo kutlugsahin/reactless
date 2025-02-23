@@ -71,7 +71,6 @@ export function registerServices(container: DependencyContainer, services: Provi
 				if (!result[isLifecycleHandled]) {
 					result[isLifecycleHandled] = true;
 					resolvedServices.add(result);
-					initInstance(result);
 				}
 			},
 			{ frequency: 'Once' }

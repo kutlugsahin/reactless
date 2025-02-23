@@ -1,5 +1,6 @@
 export const isMounted = Symbol('isServiceMounted');
 export const isLifecycleHandled = Symbol('isLifecycleHandled');
+export const isInitialized = Symbol('isInitialized');
 
 export const stateMetadataKey = Symbol('state');
 export const triggerMetadataKey = Symbol('trigger');
