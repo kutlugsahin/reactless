@@ -1,5 +1,9 @@
 import { effect, ReactiveEffectRunner, stop } from '@vue/reactivity';
-import { FC, memo, MutableRefObject, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { createElement, FC, memo, MutableRefObject, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { DependencyContainer } from 'tsyringe';
+import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel';
+import { Context } from '../context/context';
+import { Constructor } from '@impair/types';
 
 function useForceUpdate() {
 	const [_, setVal] = useState({});
@@ -28,7 +32,6 @@ function debounceMicrotask(fn: Function) {
 				called = false;
 				fn();
 			});
-			fn();
 		}
 	};
 }
@@ -40,6 +43,8 @@ export function component<P>(component: FC<P>) {
 		const runner = useRef<ReactiveEffectRunner>();
 		const propsRef = useRef<P>(props);
 		const isDirty = useRef(false);
+		const componentContainer = useRef<DependencyContainer>();
+
 		propsRef.current = props;
 		isDirty.current = false;
 
@@ -52,6 +57,7 @@ export function component<P>(component: FC<P>) {
 
 			runner.current = effect(
 				() => {
+					setCurrentComponentContainerRef(componentContainer);
 					renderResult.current = component(propsRef.current);
 				},
 				{
@@ -67,6 +73,21 @@ export function component<P>(component: FC<P>) {
 
 		useStopRunner(runner);
 
+		if (componentContainer.current) {
+			return createElement(Context.Provider, { value: componentContainer.current }, renderResult.current);
+		}
+
 		return renderResult.current;
+	});
+}
+
+export interface RendererViewModel {
+	render(): ReactNode;
+}
+
+export function componentWithViewModel(viewModel: Constructor<RendererViewModel>) {
+	return component(() => {
+		const { render } = useViewModel(viewModel);
+		return render();
 	});
 }

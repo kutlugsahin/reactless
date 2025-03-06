@@ -2,7 +2,9 @@ import { component, inject, injectable, ServiceProvider, state, type Translation
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Lifecycle } from 'tsyringe';
 import { createQuery, setQueryClient } from '../lib/query-service/create-query';
-import { QueryClientService } from '../lib/query-service/query-service';
+import { componentWithViewModel, RendererViewModel } from '@impair/component/component';
+import { ReactNode, useContext } from 'react';
+import { Context } from '@impair/context/context';
 
 // @injectable()
 // class Viewmodel {
@@ -75,7 +77,7 @@ const queryPosts = createQuery({
 });
 
 @injectable()
-class PostViewModel {
+class PostViewModel implements RendererViewModel {
 	@state
 	selectedId = 1;
 
@@ -83,6 +85,20 @@ class PostViewModel {
 
 	constructor(@inject('t') private t: TranslationFunction) {
 		console.log('PostViewModel', this.t('hello'));
+	}
+
+	render() {
+		const context = useContext(Context);
+
+		console.log('context', context);
+
+		return (
+			<div>
+				<Buttons />
+				<hr />
+				{JSON.stringify(this.posts.data, null, 2)}
+			</div>
+		);
 	}
 
 	inc() {
@@ -94,22 +110,23 @@ class PostViewModel {
 	}
 }
 
-const Posts = component(() => {
-	const { posts, inc, dec } = useViewModel(PostViewModel);
+const Posts = componentWithViewModel(PostViewModel);
 
-	return (
-		<div>
-			<button className="border border-slate-800" onClick={inc}>
-				inc
-			</button>
-			<button className="border border-slate-800" onClick={dec}>
-				dec
-			</button>
-			<hr />
-			{JSON.stringify(posts.data, null, 2)}
-		</div>
-	);
-});
+@injectable()
+class ButtonViewModel implements RendererViewModel {
+	constructor(@inject(PostViewModel) private post: PostViewModel) {}
+
+	render(): ReactNode {
+		return (
+			<div>
+				<button onClick={() => this.post.inc()}>Inc</button>
+				<button onClick={() => this.post.dec()}>Dec</button>
+			</div>
+		);
+	}
+}
+
+const Buttons = componentWithViewModel(ButtonViewModel);
 
 const client = new QueryClient();
 
@@ -120,24 +137,7 @@ export function Comp() {
 
 	return (
 		<QueryClientProvider client={client}>
-			<ServiceProvider
-				provide={[
-					// {
-					// 	token: PostService,
-					// 	provider: { useClass: PostService },
-					// 	options: {
-					// 		lifecycle: Lifecycle.Transient,
-					// 	},
-					// },
-					{
-						token: QueryClientService,
-						provider: { useValue: client },
-						options: {
-							lifecycle: Lifecycle.Transient,
-						},
-					},
-				]}
-			>
+			<ServiceProvider provide={[]}>
 				<div>
 					<Posts />
 				</div>
