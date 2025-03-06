@@ -1,7 +1,6 @@
 import { DependencyContainer, Lifecycle } from 'tsyringe';
 
 import { ProviderProps, Registration, ServiceInstance } from '../types';
-import { initInstance } from './initInstance';
 import { isLifecycleHandled } from '../utils/symbols';
 
 function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]): Registration {

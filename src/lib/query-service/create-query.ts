@@ -28,7 +28,7 @@ export function setQueryClient(queryClient: QueryClient) {
 }
 
 export function createQuery<T extends QueryKey, R = any>({ key, query }: QueryData<T, R>) {
-	return function (getKeys: () => T) {
+	return function (queryParams: () => T) {
 		const state = shallowReactive<QueryState<R> & EffectDisposer>({
 			data: undefined,
 			status: null,
@@ -48,13 +48,18 @@ export function createQuery<T extends QueryKey, R = any>({ key, query }: QueryDa
 
 			scope.run(() => {
 				effect(() => {
-					const queryKey = getKeys();
+					if (observer) {
+						observer.destroy();
+					}
+
+					const queryKey = queryParams();
 
 					const queryFn = () => query(...queryKey);
 
 					observer = new QueryObserver(client, {
 						queryKey: [key, ...queryKey] as any as T,
 						queryFn,
+						placeholderData: (prev) => prev,
 					});
 
 					observer.subscribe((result) => {
@@ -64,11 +69,6 @@ export function createQuery<T extends QueryKey, R = any>({ key, query }: QueryDa
 						state.isLoading = result.isLoading;
 						state.isError = result.isError;
 						state.isSuccess = result.isSuccess;
-					});
-
-					client.prefetchQuery({
-						queryKey,
-						queryFn,
 					});
 				});
 			});

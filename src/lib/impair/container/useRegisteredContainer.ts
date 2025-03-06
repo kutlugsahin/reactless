@@ -6,11 +6,14 @@ import { registerServices } from './registerServices';
 import { useHandleLifecycle } from './useHandleLifecycle';
 import { useReactiveProps } from '../utils/useReactiveProps';
 import { ProviderProps } from '../types';
+import { useTranslation } from 'react-i18next';
 
 export function useRegisteredContainer<P>(props: P, services: ProviderProps<any>['provide']) {
 	const parentContainer = useContext(Context);
 
 	const mappedProps = useReactiveProps(props ?? {});
+
+	const { t } = useTranslation();
 
 	const { container, resolvedServices } = useMemo(() => {
 		const container = parentContainer.createChildContainer();
@@ -21,6 +24,10 @@ export function useRegisteredContainer<P>(props: P, services: ProviderProps<any>
 
 		container.register(Props, {
 			useValue: mappedProps,
+		});
+
+		container.register('t', {
+			useValue: t,
 		});
 
 		const resolvedServices = registerServices(container, services);

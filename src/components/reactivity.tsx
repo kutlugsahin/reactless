@@ -1,9 +1,8 @@
-import { component, inject, injectable, Props, ServiceProvider, state, trigger, useViewModel } from '@impair';
-import { useState } from 'react';
-import { QueryClientService, QueryService } from '../lib/query-service/query-service';
+import { component, inject, injectable, ServiceProvider, state, type TranslationFunction, useViewModel } from '@impair';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Lifecycle } from 'tsyringe';
 import { createQuery, setQueryClient } from '../lib/query-service/create-query';
+import { QueryClientService } from '../lib/query-service/query-service';
 
 // @injectable()
 // class Viewmodel {
@@ -76,42 +75,35 @@ const queryPosts = createQuery({
 });
 
 @injectable()
-class PostService extends QueryService<[number]> {
-	protected key = 'posts';
-
-	constructor(@inject(QueryClientService) queryClient: QueryClient) {
-		super(queryClient);
-	}
-
-	protected queryFunction(id: number): Promise<any> {
-		return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json());
-	}
-}
-
-@injectable()
 class PostViewModel {
 	@state
 	selectedId = 1;
 
-	// constructor(@inject(PostService) public posts: PostService) {}
-
-	// init() {
-	// 	this.posts.queryKey(() => [this.selectedId]);
-	// }
 	posts = queryPosts(() => [this.selectedId]);
+
+	constructor(@inject('t') private t: TranslationFunction) {
+		console.log('PostViewModel', this.t('hello'));
+	}
 
 	inc() {
 		this.selectedId++;
 	}
+
+	dec() {
+		this.selectedId--;
+	}
 }
 
 const Posts = component(() => {
-	const { posts, inc } = useViewModel(PostViewModel);
+	const { posts, inc, dec } = useViewModel(PostViewModel);
 
 	return (
 		<div>
 			<button className="border border-slate-800" onClick={inc}>
 				inc
+			</button>
+			<button className="border border-slate-800" onClick={dec}>
+				dec
 			</button>
 			<hr />
 			{JSON.stringify(posts.data, null, 2)}
@@ -124,7 +116,7 @@ const client = new QueryClient();
 setQueryClient(client);
 
 export function Comp() {
-	const [id, setId] = useState(0);
+	// const [id, setId] = useState(0);
 
 	return (
 		<QueryClientProvider client={client}>

@@ -5,21 +5,26 @@ import { container, DependencyContainer } from 'tsyringe';
 
 export function addGlobalResolutionInterceptor(
 	container: DependencyContainer,
-	callback: (token: any, instance: any) => void
+	callback: (instance: any) => void
 ): void {
 	const originalResolve = Object.getPrototypeOf(container).resolve;
 
-	Object.getPrototypeOf(container).resolve = function <T>(this: DependencyContainer, target: any): T {
-		const instance = originalResolve.call(this, target);
-		callback(target, instance);
+	Object.getPrototypeOf(container).resolve = function <T>(this: DependencyContainer, ...args: any[]): T {
+		const instance = originalResolve.call(this, ...args);
+		callback(instance);
 		return instance;
 	};
 }
 
-addGlobalResolutionInterceptor(container, (token, instance) => {
-	if (!instance[isInitialized]) {
+addGlobalResolutionInterceptor(container, (instance) => {
+	if (!instance[isInitialized] && typeof instance === 'object') {
 		instance[isInitialized] = true;
-		initInstance(instance);
+
+		try {
+			initInstance(instance);
+		} catch (e) {
+			console.error('Impair Error initializing instance', instance, e);
+		}
 	}
 });
 
