@@ -1,24 +1,16 @@
 import { effect, ReactiveEffectRunner, stop } from '@vue/reactivity';
-import { createElement, FC, memo, MutableRefObject, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { createElement, FC, memo, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { DependencyContainer } from 'tsyringe';
-import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel';
+
 import { Context } from '../context/context';
-import { Constructor } from '@impair/types';
+import { Constructor } from '../types';
+import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel';
 
 function useForceUpdate() {
 	const [_, setVal] = useState({});
 
 	return useCallback(() => {
 		setVal({});
-	}, []);
-}
-
-function useStopRunner(runnerRef: MutableRefObject<ReactiveEffectRunner | undefined>) {
-	useEffect(() => {
-		return () => {
-			stop(runnerRef.current!);
-			runnerRef.current = undefined;
-		};
 	}, []);
 }
 
@@ -71,7 +63,20 @@ export function component<P>(component: FC<P>) {
 			runner.current?.();
 		}
 
-		useStopRunner(runner);
+		useEffect(
+			() => () => {
+				if (runner.current) {
+					stop(runner.current);
+				}
+				runner.current = undefined;
+
+				if (componentContainer.current) {
+					componentContainer.current.dispose();
+					componentContainer.current = undefined;
+				}
+			},
+			[]
+		);
 
 		if (componentContainer.current) {
 			return createElement(Context.Provider, { value: componentContainer.current }, renderResult.current);
@@ -81,13 +86,13 @@ export function component<P>(component: FC<P>) {
 	});
 }
 
+component.fromViewModel = (viewModel: Constructor<RendererViewModel>) => {
+	return component(() => {
+		const vm = useViewModel(viewModel);
+		return vm.render();
+	});
+};
+
 export interface RendererViewModel {
 	render(): ReactNode;
-}
-
-export function componentWithViewModel(viewModel: Constructor<RendererViewModel>) {
-	return component(() => {
-		const { render } = useViewModel(viewModel);
-		return render();
-	});
 }

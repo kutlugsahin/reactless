@@ -1,49 +1,49 @@
-import { computed, ComputedRefImpl, effectScope } from '@vue/reactivity';
-import { Dictionary, Dispose } from '../types';
-import { derivedMetadataKey } from '../utils/symbols';
+import { computed, ComputedRefImpl, effectScope } from '@vue/reactivity'
+import { Dictionary, Dispose } from '../types'
+import { derivedMetadataKey } from '../utils/symbols'
 
 export function derived(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-	const propNames = Reflect.getMetadata(derivedMetadataKey, target) ?? [];
-	propNames.push({
-		propertyKey,
-		descriptor,
-	});
-	return Reflect.metadata(derivedMetadataKey, propNames)(target);
+  const propNames = Reflect.getMetadata(derivedMetadataKey, target) ?? []
+  propNames.push({
+    propertyKey,
+    descriptor,
+  })
+  return Reflect.metadata(derivedMetadataKey, propNames)(target)
 }
 
 type InitParams = {
-	instance: Dictionary;
-	disposers: Dispose[];
-};
+  instance: Dictionary
+  disposers: Dispose[]
+}
 
 export function initDerived({ disposers, instance }: InitParams) {
-	const cachedProperties = Reflect.getMetadata(derivedMetadataKey, instance);
+  const cachedProperties = Reflect.getMetadata(derivedMetadataKey, instance)
 
-	if (cachedProperties) {
-		cachedProperties.forEach(({ propertyKey, descriptor }: any) => {
-			const getter = descriptor.get;
+  if (cachedProperties) {
+    cachedProperties.forEach(({ propertyKey, descriptor }: any) => {
+      const getter = descriptor.get
 
-			let computedValue: ComputedRefImpl;
+      let computedValue: ComputedRefImpl
 
-			const scope = effectScope();
+      const scope = effectScope()
 
-			scope.run(() => {
-				computedValue = computed(() => {
-					return getter.call(instance);
-				}) as unknown as ComputedRefImpl;
-			});
+      scope.run(() => {
+        computedValue = computed(() => {
+          return getter.call(instance)
+        }) as unknown as ComputedRefImpl
+      })
 
-			disposers.push(() => {
-				scope.stop();
-			});
+      disposers.push(() => {
+        scope.stop()
+      })
 
-			Object.defineProperty(instance, propertyKey, {
-				enumerable: true,
-				configurable: true,
-				get() {
-					return computedValue.value;
-				},
-			});
-		});
-	}
+      Object.defineProperty(instance, propertyKey, {
+        enumerable: true,
+        configurable: true,
+        get() {
+          return computedValue.value
+        },
+      })
+    })
+  }
 }

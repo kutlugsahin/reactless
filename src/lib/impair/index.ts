@@ -1,8 +1,12 @@
-export { injectable, inject, delay } from 'tsyringe';
-export { state, shallowState, derived, trigger, untrack } from './reactivity';
 export { component } from './component/component';
-export { ServiceProvider } from './provider/provider';
 export { useService } from './component/hooks/useService';
 export { useViewModel } from './component/hooks/useViewModel';
+export * from './container/createChildContainer';
+export * from './container/injectable';
 export * from './injectables/tokens';
+export { ServiceProvider } from './provider/provider';
+export * from './query/create-query';
+export { derived, shallowState, state, trigger, untrack } from './reactivity';
 export * from './types';
+export { enableTracking, pauseTracking, toRaw, toReadonly } from '@vue/reactivity';
+export { delay, inject } from 'tsyringe';

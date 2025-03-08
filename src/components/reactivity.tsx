@@ -1,10 +1,10 @@
-import { component, inject, injectable, ServiceProvider, state, type TranslationFunction, useViewModel } from '@impair';
+import { delay, inject, injectable, ServiceProvider, state, type TranslationFunction } from '@impair';
+import { component, RendererViewModel } from '@impair/component/component';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Lifecycle } from 'tsyringe';
-import { createQuery, setQueryClient } from '../lib/query-service/create-query';
-import { componentWithViewModel, RendererViewModel } from '@impair/component/component';
-import { ReactNode, useContext } from 'react';
-import { Context } from '@impair/context/context';
+import { ReactNode } from 'react';
+import { createQuery, setQueryClient } from '../lib/query/create-query';
+import { container } from 'tsyringe';
+import { isProxy } from '@vue/reactivity';
 
 // @injectable()
 // class Viewmodel {
@@ -77,21 +77,23 @@ const queryPosts = createQuery({
 });
 
 @injectable()
+class UserVideModel {
+	@state
+	userName = 'kutlu';
+
+	constructor(@inject(delay(() => PostViewModel)) public postviewModel: PostViewModel) {}
+}
+
+@injectable()
 class PostViewModel implements RendererViewModel {
 	@state
 	selectedId = 1;
 
 	posts = queryPosts(() => [this.selectedId]);
 
-	constructor(@inject('t') private t: TranslationFunction) {
-		console.log('PostViewModel', this.t('hello'));
-	}
+	constructor(@inject(delay(() => UserVideModel)) public user: UserVideModel) {}
 
 	render() {
-		const context = useContext(Context);
-
-		console.log('context', context);
-
 		return (
 			<div>
 				<Buttons />
@@ -110,7 +112,7 @@ class PostViewModel implements RendererViewModel {
 	}
 }
 
-const Posts = componentWithViewModel(PostViewModel);
+const Posts = component.fromViewModel(PostViewModel);
 
 @injectable()
 class ButtonViewModel implements RendererViewModel {
@@ -121,12 +123,19 @@ class ButtonViewModel implements RendererViewModel {
 			<div>
 				<button onClick={() => this.post.inc()}>Inc</button>
 				<button onClick={() => this.post.dec()}>Dec</button>
+				<input
+					type="text"
+					value={this.post.user.userName}
+					onChange={() => {
+						this.post.user.userName += '1';
+					}}
+				/>
 			</div>
 		);
 	}
 }
 
-const Buttons = componentWithViewModel(ButtonViewModel);
+const Buttons = component.fromViewModel(ButtonViewModel);
 
 const client = new QueryClient();
 
@@ -137,11 +146,57 @@ export function Comp() {
 
 	return (
 		<QueryClientProvider client={client}>
-			<ServiceProvider provide={[]}>
-				<div>
-					<Posts />
-				</div>
-			</ServiceProvider>
+			{/* <ServiceProvider provide={[]}> */}
+			<div>
+				<Posts />
+			</div>
+			{/* </ServiceProvider> */}
 		</QueryClientProvider>
 	);
 }
+
+@injectable()
+class A {
+	constructor(@inject(delay(() => B)) private b: B) {}
+
+	public data = 3;
+}
+
+@injectable()
+class B {
+	constructor(@inject(delay(() => A)) public a: A) {}
+}
+
+const c1 = container.createChildContainer();
+const c2 = c1.createChildContainer();
+
+const r1 = c1.resolve.bind(c1);
+const r2 = c2.resolve.bind(c2);
+
+// c1.resolve = function (...args: any[]) {
+// 	const instance = r1.call(c1, ...args);
+
+// 	if (isProxy(instance)) {
+// 		console.log('isProxy');
+// 	}
+
+// 	return instance;
+// };
+
+// c2.resolve = function (...args: any[]) {
+// 	const instance = r2.call(c2, ...args);
+
+// 	if (args.length > 1) {
+// 		console.log('isProxy');
+// 	}
+
+// 	console.log(instance);
+
+// 	return instance;
+// };
+
+const b = c2.resolve(B);
+
+// setTimeout(() => {
+console.log(b.a.data);
+// });
