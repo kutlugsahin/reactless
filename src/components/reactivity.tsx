@@ -1,10 +1,10 @@
-import { delay, inject, injectable, ServiceProvider, state, type TranslationFunction } from '@impair';
-import { component, RendererViewModel } from '@impair/component/component';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode } from 'react';
-import { createQuery, setQueryClient } from '../lib/query/create-query';
-import { container } from 'tsyringe';
-import { isProxy } from '@vue/reactivity';
+import { delay, inject, injectable, RendererViewModel, ServiceProvider, state } from '@impair'
+import { component } from '@impair/component/component'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactNode } from 'react'
+import { createQuery, setQueryClient } from '../lib/query/create-query'
+import { container } from 'tsyringe'
+import { isProxy } from '@vue/reactivity'
 
 // @injectable()
 // class Viewmodel {
@@ -70,108 +70,109 @@ import { isProxy } from '@vue/reactivity';
 // });
 
 const queryPosts = createQuery({
-	key: 'posts',
-	query(id: number) {
-		return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json());
-	},
-});
+  key: 'posts',
+  query(id: number) {
+    return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json())
+  },
+})
 
 @injectable()
 class UserVideModel {
-	@state
-	userName = 'kutlu';
+  @state
+  userName = 'kutlu'
 
-	constructor(@inject(delay(() => PostViewModel)) public postviewModel: PostViewModel) {}
+  constructor(@inject(delay(() => PostViewModel)) public postviewModel: PostViewModel) {}
 }
 
 @injectable()
 class PostViewModel implements RendererViewModel {
-	@state
-	selectedId = 1;
+  @state
+  selectedId = 1
 
-	posts = queryPosts(() => [this.selectedId]);
+  posts = queryPosts(() => [this.selectedId])
 
-	constructor(@inject(delay(() => UserVideModel)) public user: UserVideModel) {}
+  constructor(@inject(delay(() => UserVideModel)) public user: UserVideModel) {}
 
-	render() {
-		return (
-			<div>
-				<Buttons />
-				<hr />
-				{JSON.stringify(this.posts.data, null, 2)}
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div>
+        <Buttons />
+        <hr />
+        {JSON.stringify(this.posts.data, null, 2)}
+      </div>
+    )
+  }
 
-	inc() {
-		this.selectedId++;
-	}
+  inc() {
+    this.selectedId++
+  }
 
-	dec() {
-		this.selectedId--;
-	}
+  dec() {
+    this.selectedId--
+  }
 }
 
-const Posts = component.fromViewModel(PostViewModel);
+const Posts = component.fromViewModel(PostViewModel)
 
 @injectable()
 class ButtonViewModel implements RendererViewModel {
-	constructor(@inject(PostViewModel) private post: PostViewModel) {}
+  constructor(@inject(PostViewModel) private post: PostViewModel) {}
 
-	render(): ReactNode {
-		return (
-			<div>
-				<button onClick={() => this.post.inc()}>Inc</button>
-				<button onClick={() => this.post.dec()}>Dec</button>
-				<input
-					type="text"
-					value={this.post.user.userName}
-					onChange={(e) => {
-						this.post.user.userName = e.target.value;
-					}}
-				/>
-			</div>
-		);
-	}
+  render(): ReactNode {
+    return (
+      <div>
+        <button onClick={() => this.post.inc()}>Inc</button>
+        <button onClick={() => this.post.dec()}>Dec</button>
+        <input
+          type="text"
+          value={this.post.user.userName}
+          onChange={(e) => {
+            this.post.user.userName = e.target.value
+          }}
+        />
+      </div>
+    )
+  }
 }
 
-const Buttons = component.fromViewModel(ButtonViewModel);
+const Buttons = component.fromViewModel(ButtonViewModel)
 
-const client = new QueryClient();
+const client = new QueryClient()
 
-setQueryClient(client);
+setQueryClient(client)
 
 export function Comp() {
-	// const [id, setId] = useState(0);
+  // const [id, setId] = useState(0);
 
-	return (
-		<QueryClientProvider client={client}>
-			{/* <ServiceProvider provide={[]}> */}
-			<div>
-				<Posts />
-			</div>
-			{/* </ServiceProvider> */}
-		</QueryClientProvider>
-	);
+  return (
+    <QueryClientProvider client={client}>
+      {/* <ServiceProvider provide={[]}> */}
+      <div>
+        <Posts />
+      </div>
+      {/* </ServiceProvider> */}
+    </QueryClientProvider>
+  )
 }
 
 @injectable()
 class A {
-	constructor(@inject(delay(() => B)) private b: B) {}
+  constructor(@inject(delay(() => B)) private b: B) {}
 
-	public data = 3;
+  public data = 3
 }
 
 @injectable()
 class B {
-	constructor(@inject(delay(() => A)) public a: A) {}
+  constructor(@inject(delay(() => A)) public a: A) {}
 }
 
-const c1 = container.createChildContainer();
-const c2 = c1.createChildContainer();
+const c1 = container.createChildContainer()
+const c2 = c1.createChildContainer()
 
-const r1 = c1.resolve.bind(c1);
-const r2 = c2.resolve.bind(c2);
+const r1 = c1.resolve.bind(c1)
+
+const r2 = c2.resolve.bind(c2)
 
 // c1.resolve = function (...args: any[]) {
 // 	const instance = r1.call(c1, ...args);
@@ -195,8 +196,8 @@ const r2 = c2.resolve.bind(c2);
 // 	return instance;
 // };
 
-const b = c2.resolve(B);
+const b = c2.resolve(B)
 
 // setTimeout(() => {
-console.log(b.a.data);
+console.log(b.a.data)
 // });

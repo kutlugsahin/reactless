@@ -87,8 +87,12 @@ export function component<P>(component: FC<P>) {
 }
 
 component.fromViewModel = (viewModel: Constructor<RendererViewModel>) => {
-  return component(() => {
+  const comp = component(() => {
     const vm = useViewModel(viewModel)
     return vm.render()
   })
+
+  comp.displayName = viewModel.name.replace('ViewModel', '')
+
+  return comp
 }

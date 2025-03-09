@@ -36,7 +36,7 @@ export default tseslint.config(
       'object-curly-spacing': ['error', 'always'],
       'semi': ['warn', 'never'],
       'quotes': ['warn', 'single'],
-      'indent': ['warn', 2, { SwitchCase: 1 }],
+      'indent': ['error', 2, { SwitchCase: 1, ignoredNodes: ['PropertyDefinition'] }],
       '@typescript-eslint/no-this-alias': ['warn', { allowDestructuring: true, allowedNames: ['that', 'self'] }],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': [
@@ -49,8 +49,6 @@ export default tseslint.config(
       ],
       'no-unused-vars': 'off',
       'no-this-alias': 'off',
-      // 'simple-import-sort/imports': 'error',
-      // 'simple-import-sort/exports': 'error',
       '@typescript-eslint/ban-ts-ignore': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-namespace': 'off',
