@@ -4,7 +4,7 @@ import { useRegisteredContainer } from '../container/useRegisteredContainer'
 import { Context } from '../context/context'
 import type { ProviderProps } from '../types'
 
-export function ServiceProvider<P extends {}>({
+export function ServiceProvider<P extends object>({
   provide,
   children,
   props = {} as P,

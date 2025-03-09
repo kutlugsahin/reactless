@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import type {
   ClassProvider,
   FactoryProvider,
@@ -29,7 +30,7 @@ export type Registration<T = any> = {
   options?: RegistrationOptions
 }
 
-export type ProviderProps<P extends {}> = {
+export type ProviderProps<P extends object> = {
   readonly provide: readonly (Constructor | Registration | [InjectionToken, ClassProvider<any>['useClass']])[]
   props?: P
 }
@@ -60,3 +61,7 @@ export type StateMetadata = {
 }
 
 export type StateType = 'shallow' | 'deep' | 'ref'
+
+export interface RendererViewModel {
+  render(): ReactNode
+}

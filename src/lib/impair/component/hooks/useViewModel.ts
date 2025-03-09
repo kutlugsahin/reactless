@@ -1,9 +1,10 @@
 import { MutableRefObject, useContext } from 'react'
 import { DependencyContainer } from 'tsyringe'
+
+import { createChildContainer } from '../../container/createChildContainer'
+import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { Context } from '../../context/context'
 import { Constructor } from '../../types'
-import { useRegisteredContainer } from '../../container/useRegisteredContainer'
-import { createChildContainer } from '../../container/createChildContainer'
 
 let currentComponentContainerRef: MutableRefObject<DependencyContainer | undefined>
 

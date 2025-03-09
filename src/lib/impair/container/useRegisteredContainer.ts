@@ -1,14 +1,15 @@
 import { useContext, useMemo } from 'react'
-import { Context } from '../context/context'
-import { Container } from '../injectables/container'
-import { Props } from '../injectables/tokens'
-import { registerServices } from './registerServices'
-import { useHandleLifecycle } from './useHandleLifecycle'
-import { useReactiveProps } from '../utils/useReactiveProps'
-import { ProviderProps } from '../types'
 import { useTranslation } from 'react-i18next'
 import { DependencyContainer } from 'tsyringe'
+
 import { createChildContainer } from '../container/createChildContainer'
+import { Context } from '../context/context'
+import { Container } from '../injectables/container'
+import { Props, Translation } from '../injectables/tokens'
+import { ProviderProps } from '../types'
+import { useReactiveProps } from '../utils/useReactiveProps'
+import { registerServices } from './registerServices'
+import { useHandleLifecycle } from './useHandleLifecycle'
 
 export function useRegisteredContainer<P>(
   props: P,
@@ -36,8 +37,8 @@ export function useRegisteredContainer<P>(
       })
     }
 
-    if (!container.isRegistered('t')) {
-      container.register('t', {
+    if (!container.isRegistered(Translation)) {
+      container.register(Translation, {
         useValue: t,
       })
     }

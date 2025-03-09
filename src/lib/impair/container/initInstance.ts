@@ -3,13 +3,13 @@ import { initDerived } from '../reactivity/derived'
 import { initTrigger } from '../reactivity/trigger'
 import { Dictionary, Dispose } from '../types'
 import { bindMethods, patchClassInstanceMethod } from '../utils/object'
-import { isInitialized } from '../utils/symbols'
+import { isInitialized as initialized } from '../utils/symbols'
 
 export function initInstance<T extends Dictionary>(instance: T) {
-  if (!(instance as any)[isInitialized]) {
+  if (!isInitialized(instance)) {
     try {
       const disposers: Dispose[] = []
-      ;(instance as any)[isInitialized] = true
+      setInitialized(instance)
 
       patchClassInstanceMethod(instance, 'onUnmount', function dispose() {
         disposers.forEach((dispose) => {
@@ -29,9 +29,17 @@ export function initInstance<T extends Dictionary>(instance: T) {
       instance.init?.()
     } catch {
       console.error('Impair Error initializing instance', instance)
-      ;(instance as any)[isInitialized] = false
+      setInitialized(instance, false)
     }
   }
 
   return instance
+}
+
+function setInitialized(instance: any, value = true) {
+  instance[initialized] = value
+}
+
+function isInitialized(instance: any): boolean {
+  return instance[initialized] ?? false
 }

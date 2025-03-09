@@ -126,8 +126,8 @@ class ButtonViewModel implements RendererViewModel {
 				<input
 					type="text"
 					value={this.post.user.userName}
-					onChange={() => {
-						this.post.user.userName += '1';
+					onChange={(e) => {
+						this.post.user.userName = e.target.value;
 					}}
 				/>
 			</div>

@@ -1,6 +1,7 @@
 import { DependencyContainer } from 'tsyringe'
-import { Constructor } from '../types'
+
 import { initInstance } from '../container/initInstance'
+import { Constructor } from '../types'
 
 export class Container {
   constructor(private container: DependencyContainer) {}

@@ -8,11 +8,15 @@ export function createChildContainer(parentContainer: DependencyContainer): Depe
 
   const resolve = container.resolve as any
 
+  const tokens = new Set<InjectionToken>()
+
   container.resolve = function (...args: any[]) {
     const token = args[0]
     const isInjectable = typeof token === 'function' && Reflect.getMetadata(injectableMetadataKey, token)
 
-    if (isInjectable) {
+    if (isInjectable && !tokens.has(token)) {
+      tokens.add(token)
+
       container.afterResolution(
         token as InjectionToken,
         (_, instance) => {

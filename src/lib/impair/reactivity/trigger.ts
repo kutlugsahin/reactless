@@ -1,4 +1,5 @@
 import { effect, stop } from '@vue/reactivity'
+
 import { Dictionary, Dispose } from '../types'
 import { triggerMetadataKey } from '../utils/symbols'
 
@@ -18,7 +19,7 @@ export function initTrigger({ instance, disposers }: InitParams) {
 
   if (triggerProperties) {
     triggerProperties.forEach((propName: string) => {
-      const effectFn = instance[propName] as Function
+      const effectFn = instance[propName] as () => unknown
 
       const runner = effect(() => {
         effectFn.call(instance)
