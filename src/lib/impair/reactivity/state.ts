@@ -18,7 +18,7 @@ export function state(target: any, propertyKey: string) {
 
 state.shallow = shallowState
 
-export function shallowState(target: any, propertyKey: string) {
+function shallowState(target: any, propertyKey: string) {
   return registerStateMetadata(target, {
     propertyKey,
     type: 'ref',
