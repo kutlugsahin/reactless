@@ -15,69 +15,6 @@ import { ReactNode } from 'react'
 
 import { container } from 'tsyringe'
 
-// @injectable()
-// class Viewmodel {
-// 	@state
-// 	state = {
-// 		count: 0,
-// 		price: 0,
-// 	};
-
-// 	constructor(@inject(Props) private props: ReactivityProps, @inject(PostService) public posts: PostService) {
-// 		this.posts.queryKey(() => [this.props.id]);
-// 	}
-
-// 	@trigger
-// 	logCount() {
-// 		console.log('count', this.state.price);
-// 	}
-
-// 	@trigger
-// 	logId() {
-// 		console.log('id', this.props.id);
-// 	}
-// }
-
-// interface ReactivityProps {
-// 	id: number;
-// }
-
-// export const Reactivity = component((props: ReactivityProps) => {
-// 	const { state, posts } = useViewModel(Viewmodel, props);
-
-// 	console.log('render');
-
-// 	return (
-// 		<div>
-// 			<button
-// 				className="border border-black p-4 m-2"
-// 				onClick={() => {
-// 					state.count++;
-// 				}}
-// 			>
-// 				Inc {state.count}
-// 			</button>
-
-// 			<button
-// 				className="border border-black p-4 m-2"
-// 				onClick={() => {
-// 					state.price++;
-// 				}}
-// 			>
-// 				Inc
-// 			</button>
-
-// 			<div>
-// 				<ul>
-// 					{posts.data?.map((post: any) => (
-// 						<li key={post.id}>{post.title}</li>
-// 					))}
-// 				</ul>
-// 			</div>
-// 		</div>
-// 	);
-// });
-
 @injectable()
 class QueryPost extends QueryService<any, [id: number]> {
   protected key = 'posts'

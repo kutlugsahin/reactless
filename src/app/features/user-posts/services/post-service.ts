@@ -5,15 +5,15 @@ import { UserService } from '../../../services/user-service'
 
 @injectable()
 export class PostService {
-	@state
-	public posts: any[] = []
+  @state
+  public posts: any[] = []
 
-	constructor(@inject(UserService) private userService: UserService) {}
+  constructor(@inject(UserService) private userService: UserService) {}
 
-	@trigger
-	public async fetchPosts() {
-	  if (this.userService.selectedUser?.id) {
-	    this.posts = await getUserPosts(this.userService.selectedUser.id)
-	  }
-	}
+  @trigger
+  public async fetchPosts() {
+    if (this.userService.selectedUser?.id) {
+      this.posts = await getUserPosts(this.userService.selectedUser.id)
+    }
+  }
 }
