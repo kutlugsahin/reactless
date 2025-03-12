@@ -27,8 +27,8 @@ export function initInstance<T extends Dictionary>(instance: T) {
       initTrigger(params)
       bindMethods(instance)
       instance.init?.()
-    } catch {
-      console.error('Impair Error initializing instance', instance)
+    } catch (error) {
+      console.error('Impair Error initializing instance', instance, error)
       setInitialized(instance, false)
     }
   }

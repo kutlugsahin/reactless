@@ -23,7 +23,7 @@ export function createChildContainer(parentContainer: DependencyContainer): Depe
           initInstance(instance)
         },
         {
-          frequency: 'Once',
+          frequency: 'Always',
         },
       )
     }

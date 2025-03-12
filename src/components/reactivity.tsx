@@ -1,10 +1,19 @@
-import { delay, inject, injectable, RendererViewModel, ServiceProvider, state } from '@impair'
-import { component } from '@impair/component/component'
+import {
+  component,
+  delay,
+  inject,
+  injectable,
+  QueryService,
+  RendererViewModel,
+  setQueryClient,
+  state,
+  trigger,
+} from '@impair'
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
-import { createQuery, setQueryClient } from '../lib/query/create-query'
+
 import { container } from 'tsyringe'
-import { isProxy } from '@vue/reactivity'
 
 // @injectable()
 // class Viewmodel {
@@ -69,12 +78,14 @@ import { isProxy } from '@vue/reactivity'
 // 	);
 // });
 
-const queryPosts = createQuery({
-  key: 'posts',
-  query(id: number) {
+@injectable()
+class QueryPost extends QueryService<any, [id: number]> {
+  protected key = 'posts'
+
+  protected async fetch(id: number) {
     return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json())
-  },
-})
+  }
+}
 
 @injectable()
 class UserVideModel {
@@ -89,9 +100,21 @@ class PostViewModel implements RendererViewModel {
   @state
   selectedId = 1
 
-  posts = queryPosts(() => [this.selectedId])
+  constructor(
+    @inject(delay(() => UserVideModel)) public user: UserVideModel,
+    @inject(QueryPost) public posts: QueryPost,
+    @inject(QueryPost) public posts2: QueryPost,
+  ) {}
 
-  constructor(@inject(delay(() => UserVideModel)) public user: UserVideModel) {}
+  @trigger
+  querySelectedPost() {
+    this.posts.query(this.selectedId + 0)
+  }
+
+  @trigger
+  querySelectedPost2() {
+    this.posts2.query(this.selectedId + 1)
+  }
 
   render() {
     return (
@@ -99,6 +122,8 @@ class PostViewModel implements RendererViewModel {
         <Buttons />
         <hr />
         {JSON.stringify(this.posts.data, null, 2)}
+        <hr />
+        {JSON.stringify(this.posts2.data, null, 2)}
       </div>
     )
   }
