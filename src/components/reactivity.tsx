@@ -1,22 +1,13 @@
-import {
-  component,
-  delay,
-  inject,
-  injectable,
-  QueryService,
-  RendererViewModel,
-  setQueryClient,
-  state,
-  trigger,
-} from '@impair'
+import { component, inject, injectable, Props, QueryService, state, trigger } from '@impair'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactNode } from 'react'
-
-import { container } from 'tsyringe'
+type Post = {
+  id: number
+  title: string
+  body: string
+}
 
 @injectable()
-class QueryPost extends QueryService<any, [id: number]> {
+class QueryPost extends QueryService<Post, [id: number]> {
   protected key = 'posts'
 
   protected async fetch(id: number) {
@@ -24,28 +15,24 @@ class QueryPost extends QueryService<any, [id: number]> {
   }
 }
 
-@injectable()
-class UserVideModel {
-  @state
-  userName = 'kutlu'
-
-  constructor(@inject(delay(() => PostViewModel)) public postviewModel: PostViewModel) {}
+type PostProps = {
+  id: number
 }
 
 @injectable()
-class PostViewModel implements RendererViewModel {
+class PostViewModel {
   @state
   selectedId = 1
 
   constructor(
-    @inject(delay(() => UserVideModel)) public user: UserVideModel,
     @inject(QueryPost) public posts: QueryPost,
     @inject(QueryPost) public posts2: QueryPost,
+    @inject(Props) public props: PostProps,
   ) {}
 
   @trigger
   querySelectedPost() {
-    this.posts.query(this.selectedId + 0)
+    this.posts.query(this.selectedId)
   }
 
   @trigger
@@ -56,110 +43,25 @@ class PostViewModel implements RendererViewModel {
   render() {
     return (
       <div>
-        <Buttons />
+        <div>
+          <button onClick={() => this.selectedId++}>Inc</button>
+          <button onClick={() => this.selectedId--}>Dec</button>
+        </div>
         <hr />
-        {JSON.stringify(this.posts.data, null, 2)}
+        <div>
+          <h2 className="font-bold">{this.posts.data?.title}</h2>
+          <p>{this.posts.data?.body}</p>
+        </div>
         <hr />
-        {JSON.stringify(this.posts2.data, null, 2)}
-      </div>
-    )
-  }
-
-  inc() {
-    this.selectedId++
-  }
-
-  dec() {
-    this.selectedId--
-  }
-}
-
-const Posts = component.fromViewModel(PostViewModel)
-
-@injectable()
-class ButtonViewModel implements RendererViewModel {
-  constructor(@inject(PostViewModel) private post: PostViewModel) {}
-
-  render(): ReactNode {
-    return (
-      <div>
-        <button onClick={() => this.post.inc()}>Inc</button>
-        <button onClick={() => this.post.dec()}>Dec</button>
-        <input
-          type="text"
-          value={this.post.user.userName}
-          onChange={(e) => {
-            this.post.user.userName = e.target.value
-          }}
-        />
+        <div>
+          <h2 className="font-bold">{this.posts2.data?.title}</h2>
+          <p>{this.posts2.data?.body}</p>
+        </div>
+        <hr />
+        {this.props.id}
       </div>
     )
   }
 }
 
-const Buttons = component.fromViewModel(ButtonViewModel)
-
-const client = new QueryClient()
-
-setQueryClient(client)
-
-export function Comp() {
-  // const [id, setId] = useState(0);
-
-  return (
-    <QueryClientProvider client={client}>
-      {/* <ServiceProvider provide={[]}> */}
-      <div>
-        <Posts />
-      </div>
-      {/* </ServiceProvider> */}
-    </QueryClientProvider>
-  )
-}
-
-@injectable()
-class A {
-  constructor(@inject(delay(() => B)) private b: B) {}
-
-  public data = 3
-}
-
-@injectable()
-class B {
-  constructor(@inject(delay(() => A)) public a: A) {}
-}
-
-const c1 = container.createChildContainer()
-const c2 = c1.createChildContainer()
-
-const r1 = c1.resolve.bind(c1)
-
-const r2 = c2.resolve.bind(c2)
-
-// c1.resolve = function (...args: any[]) {
-// 	const instance = r1.call(c1, ...args);
-
-// 	if (isProxy(instance)) {
-// 		console.log('isProxy');
-// 	}
-
-// 	return instance;
-// };
-
-// c2.resolve = function (...args: any[]) {
-// 	const instance = r2.call(c2, ...args);
-
-// 	if (args.length > 1) {
-// 		console.log('isProxy');
-// 	}
-
-// 	console.log(instance);
-
-// 	return instance;
-// };
-
-const b = c2.resolve(B)
-
-// setTimeout(() => {
-console.log(b.a.data)
-// });
+export const Posts = component.fromViewModel<PostProps>(PostViewModel)

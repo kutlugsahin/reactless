@@ -83,12 +83,12 @@ export function component<P>(component: FC<P>) {
     }
 
     return renderResult.current
-  })
+  }) as FC<P>
 }
 
-component.fromViewModel = (viewModel: Constructor<RendererViewModel>) => {
-  const comp = component(() => {
-    const vm = useViewModel(viewModel)
+component.fromViewModel = <P extends object>(viewModel: Constructor<RendererViewModel>) => {
+  const comp = component<P>((props) => {
+    const vm = useViewModel(viewModel, props)
     return vm.render()
   })
 

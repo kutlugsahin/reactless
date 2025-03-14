@@ -1,16 +1,11 @@
 import { ReactNode } from 'react'
-import type {
-  ClassProvider,
-  FactoryProvider,
-  InjectionToken,
-  RegistrationOptions,
-  TokenProvider,
-  ValueProvider,
-} from 'tsyringe'
+import type { ClassProvider, FactoryProvider, InjectionToken, TokenProvider, ValueProvider } from 'tsyringe'
 
 import type { isLifecycleHandled, isMounted } from './utils/symbols'
 
 export type Constructor<T = any> = new (...args: any[]) => T
+
+export type InstanceLifecycle = 'singleton' | 'transient' | 'container' | 'resolution'
 
 export type RegisterType<T = any> = {
   token: Constructor<T>
@@ -27,11 +22,16 @@ export type Provider<T = any> =
 export type Registration<T = any> = {
   token: InjectionToken<T>
   provider: Provider<T>
-  options?: RegistrationOptions
+  lifecycle: InstanceLifecycle
 }
 
 export type ProviderProps<P extends object> = {
-  readonly provide: readonly (Constructor | Registration | [InjectionToken, ClassProvider<any>['useClass']])[]
+  readonly provide: readonly (
+    | Constructor
+    | Registration
+    | [InjectionToken, ClassProvider<any>['useClass']]
+    | [InjectionToken, ClassProvider<any>['useClass'], InstanceLifecycle]
+  )[]
   props?: P
 }
 

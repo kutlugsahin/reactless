@@ -1,10 +1,11 @@
-import { MutableRefObject, useContext } from 'react'
+import { MutableRefObject, useContext, useMemo } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
 import { createChildContainer } from '../../container/createChildContainer'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { Context } from '../../context/context'
 import { Constructor } from '../../types'
+import { provideMetadataKey } from '@impair/utils/symbols'
 
 let currentComponentContainerRef: MutableRefObject<DependencyContainer | undefined>
 
@@ -21,7 +22,12 @@ export function useViewModel<T extends Constructor, P extends object>(viewModel:
 
   const componentContainer = currentComponentContainerRef.current!
 
-  useRegisteredContainer(props, [viewModel], componentContainer)
+  const viewModelProviders = useMemo(() => {
+    const provided = Reflect.getMetadata(provideMetadataKey, viewModel) ?? []
+    return [...provided, viewModel]
+  }, [viewModel])
+
+  useRegisteredContainer(props, viewModelProviders, componentContainer)
 
   const instance = componentContainer.resolve<InstanceType<T>>(viewModel)
 

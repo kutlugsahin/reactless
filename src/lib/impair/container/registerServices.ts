@@ -1,7 +1,22 @@
 import { DependencyContainer, Lifecycle } from 'tsyringe'
 
-import { ProviderProps, Registration, ServiceInstance } from '../types'
+import { InstanceLifecycle, ProviderProps, Registration, ServiceInstance } from '../types'
 import { isLifecycleHandled } from '../utils/symbols'
+
+function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
+  switch (lifecycle) {
+    case 'singleton':
+      return Lifecycle.Singleton
+    case 'transient':
+      return Lifecycle.Transient
+    case 'container':
+      return Lifecycle.ContainerScoped
+    case 'resolution':
+      return Lifecycle.ResolutionScoped
+    default:
+      throw new Error('Invalid lifecycle')
+  }
+}
 
 function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]): Registration {
   /**
@@ -15,9 +30,7 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
       provider: {
         useClass: serviceClass,
       },
-      options: {
-        lifecycle: Lifecycle.Singleton,
-      },
+      lifecycle: 'singleton',
     }
   }
 
@@ -25,15 +38,13 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
    * The registration is a tuple of token and useClass,
    */
   if (Array.isArray(registration)) {
-    const [serviceToken, providedClass] = registration
+    const [serviceToken, providedClass, lifecycle = 'singleton'] = registration
     return {
       token: serviceToken,
       provider: {
         useClass: providedClass,
       },
-      options: {
-        lifecycle: Lifecycle.Singleton,
-      },
+      lifecycle,
     }
   }
 
@@ -42,12 +53,10 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
    * it means that it is a custom registration
    */
   if (typeof registration === 'object') {
-    if (!registration.options) {
+    if (!registration.lifecycle) {
       return {
         ...registration,
-        options: {
-          lifecycle: Lifecycle.Singleton,
-        },
+        lifecycle: 'singleton',
       }
     }
 
@@ -60,9 +69,11 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
 export function registerServices(container: DependencyContainer, services: ProviderProps<any>['provide']) {
   const resolvedServices = new Set<ServiceInstance>()
   services.forEach((serviceInfo) => {
-    const { provider, token, options } = getRegistrationOptions(serviceInfo)
+    const { provider, token, lifecycle } = getRegistrationOptions(serviceInfo)
 
-    container.register(token, provider as any, options)
+    container.register(token, provider as any, {
+      lifecycle: toLifecycle(lifecycle),
+    })
 
     container.afterResolution(
       token,

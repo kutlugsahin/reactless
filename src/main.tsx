@@ -1,11 +1,17 @@
 import { createRoot } from 'react-dom/client'
 import 'reflect-metadata'
 
-import { Comp } from './components/reactivity.tsx'
+import { Posts } from './components/reactivity.tsx'
 import './index.css'
 
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { setQueryClient } from '@impair'
+
+const client = new QueryClient()
+
+setQueryClient(client)
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -28,4 +34,8 @@ i18n
     },
   })
 
-createRoot(document.getElementById('root')!).render(<Comp />)
+createRoot(document.getElementById('root')!).render(
+  <QueryClientProvider client={client}>
+    <Posts id={3} />
+  </QueryClientProvider>,
+)
