@@ -1,3 +1,5 @@
+import { initOnDispose } from '@impair/lifecycle/onDispose'
+import { initOnInit } from '../lifecycle/onInit'
 import { initState } from '../reactivity'
 import { initDerived } from '../reactivity/derived'
 import { initTrigger } from '../reactivity/trigger'
@@ -11,7 +13,7 @@ export function initInstance<T extends Dictionary>(instance: T) {
       const disposers: Dispose[] = []
       setInitialized(instance)
 
-      patchClassInstanceMethod(instance, 'onUnmount', function dispose() {
+      patchClassInstanceMethod(instance, 'dispose', function dispose() {
         disposers.forEach((dispose) => {
           dispose()
         })
@@ -26,7 +28,8 @@ export function initInstance<T extends Dictionary>(instance: T) {
       initDerived(params)
       initTrigger(params)
       bindMethods(instance)
-      instance.init?.()
+      initOnInit(instance)
+      initOnDispose(instance, disposers)
     } catch (error) {
       console.error('Impair Error initializing instance', instance, error)
       setInitialized(instance, false)

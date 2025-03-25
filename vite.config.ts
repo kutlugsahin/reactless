@@ -7,15 +7,15 @@ export default defineConfig({
   plugins: [
     react({
       tsDecorators: true, // Enable TypeScript decorators
-      devTarget: 'es2020',
+      // devTarget: 'es2020',
     }),
     tsConfigPaths(),
     // componentTransform(),
     tailwindcss(),
   ],
-  esbuild: {
-    target: 'es2020',
-  },
+  // esbuild: {
+  //   target: 'es2020',
+  // },
   optimizeDeps: {
     esbuildOptions: {
       tsconfigRaw: {

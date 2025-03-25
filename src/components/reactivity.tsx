@@ -1,4 +1,5 @@
-import { component, inject, injectable, Props, QueryService, state, trigger } from '@impair'
+import { component, inject, injectable, onMount, Props, state, trigger } from 'impair'
+import { QueryService } from '../lib/query/queryService'
 
 type Post = {
   id: number
@@ -39,6 +40,9 @@ class PostViewModel {
   querySelectedPost2() {
     this.posts2.query(this.selectedId + 1)
   }
+
+  @onMount
+  sdfsdfsd() {}
 
   render() {
     return (

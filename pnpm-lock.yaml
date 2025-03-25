@@ -23,6 +23,9 @@ dependencies:
   immer:
     specifier: ^10.1.1
     version: 10.1.1
+  impair:
+    specifier: 1.0.3
+    version: 1.0.3(@vue/reactivity@3.5.13)(react@18.3.1)(reflect-metadata@0.2.2)(tsyringe@4.8.0)
   react:
     specifier: ^18.3.1
     version: 18.3.1
@@ -2317,6 +2320,20 @@ packages:
 
   /immer@10.1.1:
     resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+    dev: false
+
+  /impair@1.0.3(@vue/reactivity@3.5.13)(react@18.3.1)(reflect-metadata@0.2.2)(tsyringe@4.8.0):
+    resolution: {integrity: sha512-+3IGaeTamE8ftOFySqeYl7COvLke4Lv37Ak3HlHzWsMbuqZF+KFXa8jkiSmqjHW2UnwwfDpbIK9mBq1dg7chqg==}
+    peerDependencies:
+      '@vue/reactivity': '>=3.2.0'
+      react: '>=17.0.2'
+      reflect-metadata: '>=0.2.2'
+      tsyringe: '>=4.8.0'
+    dependencies:
+      '@vue/reactivity': 3.5.13
+      react: 18.3.1
+      reflect-metadata: 0.2.2
+      tsyringe: 4.8.0
     dev: false
 
   /import-fresh@3.3.0:

@@ -1,4 +1,4 @@
-import { state } from '../reactivity/state'
+import { state } from 'impair'
 import { QueryClient, QueryKey, QueryObserver, QueryObserverResult } from '@tanstack/react-query'
 
 let client: QueryClient
